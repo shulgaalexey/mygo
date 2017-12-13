@@ -1,0 +1,21 @@
+CXX = g++
+#CXXFLAGS = -g -L/usr/lib/ -lgtest -lgtest_main -lpthread
+CXXFLAGS = -g -L/usr/lib/ -lgtest -lgtest_main -lpthread
+INCS = -I./ -I../../src -I/usr/include/gtest
+OBJS = ../../src/Addition.o Addition_Test.o ../../src/Multiply.o Multiply_Test.o
+
+testAll: Main_TestAll $(OBJS)
+	$(CXX) -g $(INCS) -o testAll Main_TestAll.cpp $(OBJS)
+
+
+#testAll: testAll
+#	$(CXX) -g -o  Main_TestAll $(INCS) $(CXXFLAGS)
+
+.cpp.o:
+	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCS)
+
+clean:
+	rm testAll *.o testAll.xml
+
+
+#g++ -g -Wall Main_TestAll.cpp -I /usr/include/gtest/ -L /usr/lib/ -lgtest -lgtest_main -lpthread
