@@ -13,6 +13,13 @@ Features expected:
  - new function declaration
 
 
+# Build & Test
+
+```
+./make.sh
+```
+
+
 # Roadmap
 
  - [ ] Lexical analyzer
