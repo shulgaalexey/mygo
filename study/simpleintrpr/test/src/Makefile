@@ -9,7 +9,7 @@ LD_FLAGS = -L /usr/lib -l $(GOOGLE_TEST_LIB) -l pthread
 
 #OBJECTS = ../../src/lexer.o lexer_test.o all_tests.o
 OBJECTS = ../../src/lexer.o lexer_test.o all_tests.o
-TARGET = test_all
+TARGET = test_all.out
 
 all: $(TARGET)
 

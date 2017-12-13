@@ -9,7 +9,7 @@ G++_FLAGS = -c -Wall -I $(COMMON_INCLUDE) -I ./
 LD_FLAGS = -L /usr/lib -l pthread
 
 OBJECTS = lexer.o main.o
-TARGET = main
+TARGET = main.app
 
 all: $(TARGET)
 
