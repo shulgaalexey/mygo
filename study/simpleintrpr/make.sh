@@ -1,15 +1,5 @@
 #! /bin/bash
 
-echo Building....
-cd ./src
-make
-cd ..
+./build.sh
 
-echo Building tests...
-cd ./test/src
-make
-
-echo Testing...
-./test_all.out
-
-cd ../..
+./test.sh
