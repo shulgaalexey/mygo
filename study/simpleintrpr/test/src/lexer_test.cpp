@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+using namespace Interpreter;
+
 class LexerTest : public ::testing::Test {
 	protected:
 		virtual void SetUp() {
@@ -13,8 +15,8 @@ class LexerTest : public ::testing::Test {
 		}
 };
 
-TEST_F(LexerTest, Tokenize) {
-	std::vector<std::string> res = Lexer::Tokenize("");
-	EXPECT_EQ(res.size(), 0);
+TEST_F(LexerTest, should_return_empty_token_list_when_put_empty_expression) {
+	Tokens tokens = Lexer::Tokenize("");
+	EXPECT_EQ(tokens.size(), 0);
 }
 

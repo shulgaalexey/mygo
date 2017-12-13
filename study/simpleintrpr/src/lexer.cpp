@@ -1,7 +1,7 @@
 #include "lexer.h"
 
 using namespace std;
-
+/*
 vector<string> Lexer::Tokenize(const string &str) {
 	vector<string> tokens;
 
@@ -9,4 +9,4 @@ vector<string> Lexer::Tokenize(const string &str) {
 		return tokens;
 
 	return tokens;
-}
+}*/
