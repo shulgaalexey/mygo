@@ -1,6 +1,8 @@
 #include <limits.h>
 #include "gtest/gtest.h"
 #include "lexer.h"
+#include <string>
+#include <vector>
 
 class LexerTest : public ::testing::Test {
 	protected:
@@ -12,8 +14,7 @@ class LexerTest : public ::testing::Test {
 };
 
 TEST_F(LexerTest, Tokenize) {
-	Lexer lexer;
-	int res = lexer.Tokenize(13);
-	EXPECT_EQ(res, 42);
+	std::vector<std::string> res = Lexer::Tokenize("");
+	EXPECT_EQ(res.size(), 0);
 }
 
