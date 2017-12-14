@@ -13,14 +13,35 @@ class Lexer {
 
 namespace Interpreter {
 
-//struct Token {};
+
 enum class Operator : wchar_t {
 	Plus = L'+',
 };
-typedef Operator Token;
+
+
+enum class TokenType {
+	Operator,
+	Number
+};
+
+class Token {
+	public:
+		Token(Operator) : m_type(TokenType::Operator) {}
+		Token(double) : m_type(TokenType::Number) {}
+		TokenType Type() const { return m_type; }
+
+	private:
+		TokenType m_type;
+};
+
+
 
 inline std::wstring ToString(const Token &token) {
-	return{ static_cast<wchar_t>(token) };
+	return{ static_cast<wchar_t>(token.Type()) };
+}
+
+inline std::wstring ToString(const TokenType &tokenType) {
+	return{ static_cast<wchar_t>(tokenType) };
 }
 
 

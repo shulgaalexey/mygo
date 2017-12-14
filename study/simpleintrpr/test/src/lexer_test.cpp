@@ -1,42 +1,11 @@
 #include <limits.h>
 #include "gtest/gtest.h"
 #include "lexer.h"
+#include "assert_range.h"
 #include <string>
 #include <vector>
-#include <iostream>
 
 using namespace Interpreter;
-using namespace std;
-
-
-namespace AssertRange {
-
-template<class T, class ActualRange>
-static void AreEqual(initializer_list<T> expect, const ActualRange &actual) {
-	auto actualIter = begin(actual);
-	auto expectIter = begin(expect);
-
-
-	auto expectDist = distance(expectIter, end(expect));
-	auto actualDist = distance(actualIter, end(actual));
-
-	if (expectDist != actualDist)
-		cerr << L"Size differs." << endl;
-	EXPECT_EQ(expectDist, actualDist);
-
-	for (; expectIter != end(expect) && actualIter != end(actual);
-			++expectIter, ++actualIter) {
-		auto message = L"Mismatch in position " +
-			to_wstring(distance(begin(expect), expectIter));
-		if (*expectIter != *actualIter)
-			cerr << message.c_str() << endl;
-
-		EXPECT_EQ(*expectIter, *actualIter);
-	}
-}
-
-} // namespace AssertRange
-
 
 class LexerTest : public ::testing::Test {
 	protected:
@@ -47,7 +16,7 @@ class LexerTest : public ::testing::Test {
 		}
 };
 
-TEST_F(LexerTest, should_return_empty_token_list_when_put_empty_expression) {
+/*TEST_F(LexerTest, should_return_empty_token_list_when_put_empty_expression) {
 	Tokens tokens = Lexer::Tokenize(L"");
 	EXPECT_EQ(tokens.size(), 0);
 }
@@ -56,3 +25,8 @@ TEST_F(LexerTest, should_tokenize_single_plus_operator) {
 	Tokens tokens = Lexer::Tokenize(L"+");
 	AssertRange::AreEqual({ Operator::Plus }, tokens);
 }
+
+TEST_F(LexerTest, shoud_tokenize_single_digit) {
+	Tokens tokens = Lexer::Tokenize(L"1");
+	AssertRange::AreEqual({ 1.0 }, tokens);
+}*/
