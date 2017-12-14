@@ -7,8 +7,7 @@ G++ = g++ -std=c++1y
 G++_FLAGS = -c -Wall -I $(GOOGLE_TEST_INCLUDE) -I ./ -I ../../src
 LD_FLAGS = -L /usr/lib -l $(GOOGLE_TEST_LIB) -l pthread
 
-#OBJECTS = ../../src/lexer.o lexer_test.o all_tests.o
-OBJECTS = ../../src/lexer.o lexer_test.o token_test.o all_tests.o
+OBJECTS = ../../src/lexer.o lexer_test.o token_test.o parser_test.o all_tests.o
 TARGET = test_all.out
 
 all: $(TARGET)
