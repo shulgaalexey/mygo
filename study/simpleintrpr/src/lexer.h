@@ -13,7 +13,16 @@ class Lexer {
 
 namespace Interpreter {
 
-struct Token {};
+//struct Token {};
+enum class Operator : wchar_t {
+	Plus = L'+',
+};
+typedef Operator Token;
+
+inline std::wstring ToString(const Token &token) {
+	return{ static_cast<wchar_t>(token) };
+}
+
 
 typedef std::vector<Token> Tokens;
 
@@ -39,10 +48,13 @@ namespace Lexer {
  *
  * @see other methods of the interpreter
  */
-inline Tokens Tokenize(const std::string &expr) {
+inline Tokens Tokenize(std::wstring expr) {
 	//Tokens tokens;
 	//return tokens;
-	return {};
+	if (expr.empty())
+		return {};
+
+	return{ static_cast<Operator>(expr[0]) };
 }
 
 }; // namespace Lexer
