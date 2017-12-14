@@ -40,3 +40,10 @@ TEST_F(LexerTest, should_tokenize_plus_and_number) {
 	Tokens tokens = Lexer::Tokenize(L"+12.34");
 	AssertRange::AreEqual({ Token(Operator::Plus), Token(12.34) }, tokens);
 }
+
+TEST_F(LexerTest, shlould_skip_spaces) {
+	Tokens tokens = Lexer::Tokenize(L" 1 + 12.34  ");
+	AssertRange::AreEqual(
+			{ Token(1.0), Token(Operator::Plus), Token(12.34) },
+			tokens);
+}

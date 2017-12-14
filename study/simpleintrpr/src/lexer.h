@@ -130,8 +130,10 @@ inline Tokens Tokenize(std::wstring expr) {
 			wchar_t* end;
 			result.push_back(std::wcstod(current, &end));
 			current = end;
-		} else {
+		} else if (*current == static_cast<wchar_t>(Operator::Plus)) {
 			result.push_back(static_cast<Operator>(*current));
+			++current;
+		} else {
 			++current;
 		}
 	}
