@@ -73,6 +73,44 @@ TEST_F(ParserTest, should_get_greater_precedence_for_mul_operator) {
 			Parser::PrecedenceOf(Operator::Plus));
 }
 
-// Receives [1 * 2 + 3], returns [1 2 * 3 +]
+// Receives [1 + 2 / 3 - 4 * 5], returns [1 2 3 / + 4 5 * -]
+TEST_F(ParserTest, should_parse_complex_expression) {
+	Tokens tokens = Parser::Parse({
+			Token(1),
+			Token(Operator::Plus),
+		       	Token(2),
+ 			Token(Operator::Div),
+			Token(3),
+			Token(Operator::Minus),
+			Token(4),
+			Token(Operator::Mul),
+			Token(5) });
+
+	AssertRange::AreEqual( {
+			Token(1),
+			Token(2),
+			Token(3),
+ 			Token(Operator::Div),
+			Token(Operator::Plus),
+			Token(4),
+			Token(5),
+			Token(Operator::Mul),
+			Token(Operator::Minus) }, tokens);
+}
 
 // Receives [1 + 2 * 3], returns [1 2 3 * +]
+TEST_F(ParserTest, should_parse_add_and_mul) {
+	Tokens tokens = Parser::Parse({
+			Token(1),
+			Token(Operator::Plus),
+		       	Token(2),
+ 			Token(Operator::Mul),
+			Token(3) });
+
+	AssertRange::AreEqual( {
+			Token(1),
+			Token(2),
+			Token(3),
+ 			Token(Operator::Mul),
+			Token(Operator::Plus) }, tokens);
+}
