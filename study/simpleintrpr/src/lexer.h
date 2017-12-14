@@ -6,19 +6,18 @@
 #include <stdexcept>
 #include <cwctype>
 #include <cwchar>
-
-/*
-class Lexer {
-	public:
-		static std::vector<std::string> Tokenize(const std::string &str);
-};
-*/
+#include <algorithm>
 
 namespace Interpreter {
 
 
 enum class Operator : wchar_t {
 	Plus = L'+',
+	Minus = L'-',
+	Mul = L'*',
+	Div = L'/',
+	LParen = L'(',
+	RParen = L')'
 };
 
 
@@ -131,7 +130,20 @@ class Tokenizer {
 		}
 
 		bool IsOperator() const {
-			return *m_current == static_cast<wchar_t>(Operator::Plus);
+			auto all = {
+				Operator::Plus,
+				Operator::Minus,
+				Operator::Mul,
+				Operator::Div,
+				Operator::LParen,
+				Operator::RParen
+			};
+
+			return std::any_of(
+				all.begin(), all.end(), [this](Operator o) {
+					return *m_current == static_cast<wchar_t>(o);
+				});
+
 		}
 
 		void ScanOperator() {
