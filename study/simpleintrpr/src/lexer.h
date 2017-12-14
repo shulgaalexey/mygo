@@ -40,9 +40,9 @@ namespace Lexer {
  * @see other methods of the interpreter
  */
 inline Tokens Tokenize(const std::string &expr) {
-	Tokens tokens;
-	return tokens;
-	//return {};
+	//Tokens tokens;
+	//return tokens;
+	return {};
 }
 
 }; // namespace Lexer

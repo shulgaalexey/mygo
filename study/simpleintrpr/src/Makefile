@@ -3,7 +3,7 @@
 #COMMON_LIB = gtest
 COMMON_INCLUDE = /usr/include
 
-G++ = g++
+G++ = g++ -std=c++1y
 G++_FLAGS = -c -Wall -I $(COMMON_INCLUDE) -I ./
 #LD_FLAGS = -L /usr/lib -l $(COMMON_LIB) -l pthread
 LD_FLAGS = -L /usr/lib -l pthread

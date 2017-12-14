@@ -3,7 +3,7 @@
 GOOGLE_TEST_LIB = gtest
 GOOGLE_TEST_INCLUDE = /usr/include
 
-G++ = g++
+G++ = g++ -std=c++1y
 G++_FLAGS = -c -Wall -I $(GOOGLE_TEST_INCLUDE) -I ./ -I ../../src
 LD_FLAGS = -L /usr/lib -l $(GOOGLE_TEST_LIB) -l pthread
 
