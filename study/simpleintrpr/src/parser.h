@@ -9,7 +9,19 @@ namespace Parser {
 
 
 inline Tokens Parse(const Tokens &tokens) {
-	return tokens;
+	Tokens output;
+	Tokens stack;
+
+	for (const Token &token : tokens) {
+		if (token.Type() == TokenType::Number) {
+			output.push_back(token);
+		} else {
+			stack.push_back(token);
+		}
+	}
+	std::copy(stack.crbegin(), stack.crend(), std::back_inserter(output));
+
+	return output;
 }
 
 } // namespace Parser

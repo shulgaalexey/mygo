@@ -28,7 +28,17 @@ TEST_F(ParserTest, should_parse_single_number) {
 }
 
 // Receives [1 + 2], returns [1 2 +]
+TEST_F(ParserTest, should_parse_num_plus_num) {
+	Tokens tokens = Parser::Parse({
+			Token(1),
+			Token(Operator::Plus),
+		       	Token(2) });
 
+	AssertRange::AreEqual( {
+			Token(1),
+			Token(2),
+ 			Token(Operator::Plus) }, tokens);
+}
 
 // Receives [1 + 2 + 3], returns [1 2 + 3 +]
 
