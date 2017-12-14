@@ -41,6 +41,37 @@ TEST_F(ParserTest, should_parse_num_plus_num) {
 }
 
 // Receives [1 + 2 + 3], returns [1 2 + 3 +]
+TEST_F(ParserTest, should_parse_two_additions) {
+	Tokens tokens = Parser::Parse({
+			Token(1),
+			Token(Operator::Plus),
+		       	Token(2),
+ 			Token(Operator::Plus),
+			Token(3) });
+
+	AssertRange::AreEqual( {
+			Token(1),
+			Token(2),
+ 			Token(Operator::Plus),
+ 			Token(3),
+			Token(Operator::Plus) }, tokens);
+}
+
+// Operators + and - should have similar priorities
+// Operators * and / should have similar priorities
+TEST_F(ParserTest, should_get_same_precenece_for_operator_pairs) {
+	EXPECT_EQ(Parser::PrecedenceOf(Operator::Plus),
+			Parser::PrecedenceOf(Operator::Minus));
+
+	EXPECT_EQ(Parser::PrecedenceOf(Operator::Mul),
+			Parser::PrecedenceOf(Operator::Div));
+}
+
+// Operators */ should have greater priority than +-
+TEST_F(ParserTest, should_get_greater_precedence_for_mul_operator) {
+	EXPECT_GT(Parser::PrecedenceOf(Operator::Mul),
+			Parser::PrecedenceOf(Operator::Plus));
+}
 
 // Receives [1 * 2 + 3], returns [1 2 * 3 +]
 

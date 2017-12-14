@@ -12,17 +12,40 @@ inline Tokens Parse(const Tokens &tokens) {
 	Tokens output;
 	Tokens stack;
 
-	for (const Token &token : tokens) {
-		if (token.Type() == TokenType::Number) {
-			output.push_back(token);
-		} else {
-			stack.push_back(token);
+	auto popAll = [&]() {
+		while (!stack.empty()) {
+			output.push_back(stack.back());
+			stack.pop_back();
 		}
+	};
+
+	for (const Token &token : tokens) {
+		if (token.Type() == TokenType::Operator) {
+			popAll();
+			stack.push_back(token);
+			continue;
+		}
+		output.push_back(token);
 	}
-	std::copy(stack.crbegin(), stack.crend(), std::back_inserter(output));
+
+	popAll();
 
 	return output;
 }
+
+inline int PrecedenceOf(Operator op) {
+	switch (op) {
+	case Operator::Plus:
+	case Operator::Minus:
+		return 0;
+	case Operator::Mul:
+	case Operator::Div:
+		return 1;
+	default:
+		throw std::logic_error("Unsupported type of operator at Parser::PrecedenceOf");
+	}
+}
+
 
 } // namespace Parser
 
