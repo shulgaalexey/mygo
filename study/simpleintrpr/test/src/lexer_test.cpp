@@ -35,3 +35,8 @@ TEST_F(LexerTest, should_tokenize_floating_point_number) {
 	Tokens tokens = Lexer::Tokenize(L"12.34");
 	AssertRange::AreEqual({ 12.34 }, tokens);
 }
+
+TEST_F(LexerTest, should_tokenize_plus_and_number) {
+	Tokens tokens = Lexer::Tokenize(L"+12.34");
+	AssertRange::AreEqual({ Token(Operator::Plus), Token(12.34) }, tokens);
+}

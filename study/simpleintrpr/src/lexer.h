@@ -45,6 +45,30 @@ class Token {
 			return m_number;
 		}
 
+		bool operator == (const Token &ref) const {
+			if (m_type != ref.m_type)
+				return false;
+
+			switch (m_type) {
+			case TokenType::Number:
+				if (m_number != ref.m_number)
+					return false;
+				break;
+			case TokenType::Operator:
+				if (m_operator != ref.m_operator)
+					return false;
+				break;
+			default:
+				throw std::logic_error("Not supported token type at operator ==");
+			}
+
+			return true;
+		}
+
+		bool operator != (const Token &ref) const {
+			return !(*this == ref);
+		}
+
 	private:
 		TokenType m_type;
 		union {
@@ -97,16 +121,22 @@ namespace Lexer {
  * @see other methods of the interpreter
  */
 inline Tokens Tokenize(std::wstring expr) {
+	Tokens result;
 	const wchar_t *current = expr.c_str();
-	if (!*current)
-		return {};
 
-	if (std::iswdigit(*current)) {
-		wchar_t* end;
-		return { std::wcstod(current, &end) };
+	while (*current) {
+
+		if (std::iswdigit(*current)) {
+			wchar_t* end;
+			result.push_back(std::wcstod(current, &end));
+			current = end;
+		} else {
+			result.push_back(static_cast<Operator>(*current));
+			++current;
+		}
 	}
 
-	return { static_cast<Operator>(*current) };
+	return result;
 }
 
 }; // namespace Lexer
