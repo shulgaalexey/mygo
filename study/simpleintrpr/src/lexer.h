@@ -76,22 +76,30 @@ class Token {
 		};
 };
 
-
+inline std::wstring ToString(const Operator &op) {
+	return{ static_cast<wchar_t>(op) };
+}
 
 inline std::wstring ToString(const Token &token) {
-	//return{ static_cast<wchar_t>(token.Type()) };
-	switch (token.Type()) {
+	switch(token.Type()) {
 	case TokenType::Number:
 		return std::to_wstring(static_cast<double>(token));
 	case TokenType::Operator:
 		return ToString(static_cast<Operator>(token));
 	default:
-		return L"Unknown token";
+		throw std::out_of_range("TokenType");
 	}
 }
 
-inline std::wstring ToString(const TokenType &tokenType) {
-	return{ static_cast<wchar_t>(tokenType) };
+inline std::wstring ToString(const TokenType &type) {
+	switch(type) {
+	case TokenType::Operator:
+		return L"Operator";
+	case TokenType::Number:
+		return L"Number";
+	default:
+		throw std::out_of_range("TokenType");
+	}
 }
 
 

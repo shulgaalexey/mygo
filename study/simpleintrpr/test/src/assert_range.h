@@ -20,10 +20,15 @@ static void AreEqual(std::initializer_list<T> expect, const ActualRange &actual)
 
 	for (; expectIter != std::end(expect) && actualIter != std::end(actual);
 			++expectIter, ++actualIter) {
-		auto message = L"Mismatch in position " +
-			std::to_wstring(std::distance(std::begin(expect), expectIter));
-		if (*expectIter != *actualIter)
+
+		if (*expectIter != *actualIter) {
+			std::cout << "some_error" << std::endl;
+
+			auto message = L"Mismatch in position " +
+				std::to_wstring(std::distance(std::begin(expect), expectIter));
+
 			std::cerr << message.c_str() << std::endl;
+		}
 
 		EXPECT_EQ(*expectIter, *actualIter);
 	}
