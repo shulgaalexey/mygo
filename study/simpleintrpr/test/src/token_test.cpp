@@ -1,7 +1,5 @@
-#include <limits.h>
 #include "gtest/gtest.h"
 #include "lexer.h"
-#include "assert_range.h"
 
 using namespace Interpreter;
 
@@ -22,4 +20,14 @@ TEST_F(TokenTest, should_get_type_for_operator_token) {
 TEST_F(TokenTest, should_get_type_for_number_token) {
 	Token numToken(1.2);
 	EXPECT_EQ(TokenType::Number, numToken.Type());
+}
+
+TEST_F(TokenTest, should_get_operator_code_from_operator_token) {
+	Token token(Operator::Plus);
+	EXPECT_EQ(Operator::Plus, token);
+}
+
+TEST_F(TokenTest, should_get_number_value_from_number_token) {
+	Token token(1.23);
+	EXPECT_EQ(1.23, token);
 }

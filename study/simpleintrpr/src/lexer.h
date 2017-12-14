@@ -3,6 +3,9 @@
 
 #include <string>
 #include <vector>
+#include <stdexcept>
+#include <cwctype>
+#include <cwchar>
 
 /*
 class Lexer {
@@ -26,18 +29,42 @@ enum class TokenType {
 
 class Token {
 	public:
-		Token(Operator) : m_type(TokenType::Operator) {}
-		Token(double) : m_type(TokenType::Number) {}
+		Token(Operator op) : m_type(TokenType::Operator), m_operator(op) {}
+		Token(double num) : m_type(TokenType::Number), m_number(num) {}
 		TokenType Type() const { return m_type; }
+
+		operator Operator() const {
+			if (m_type != TokenType::Operator)
+				throw std::logic_error("Should be operator token!");
+			return m_operator;
+		}
+
+		operator double() const {
+			if (m_type != TokenType::Number)
+				throw std::logic_error("Should be number token!");
+			return m_number;
+		}
 
 	private:
 		TokenType m_type;
+		union {
+			Operator m_operator;
+			double m_number;
+		};
 };
 
 
 
 inline std::wstring ToString(const Token &token) {
-	return{ static_cast<wchar_t>(token.Type()) };
+	//return{ static_cast<wchar_t>(token.Type()) };
+	switch (token.Type()) {
+	case TokenType::Number:
+		return std::to_wstring(static_cast<double>(token));
+	case TokenType::Operator:
+		return ToString(static_cast<Operator>(token));
+	default:
+		return L"Unknown token";
+	}
 }
 
 inline std::wstring ToString(const TokenType &tokenType) {
@@ -70,12 +97,16 @@ namespace Lexer {
  * @see other methods of the interpreter
  */
 inline Tokens Tokenize(std::wstring expr) {
-	//Tokens tokens;
-	//return tokens;
-	if (expr.empty())
+	const wchar_t *current = expr.c_str();
+	if (!*current)
 		return {};
 
-	return{ static_cast<Operator>(expr[0]) };
+	if (std::iswdigit(*current)) {
+		wchar_t* end;
+		return { std::wcstod(current, &end) };
+	}
+
+	return { static_cast<Operator>(*current) };
 }
 
 }; // namespace Lexer

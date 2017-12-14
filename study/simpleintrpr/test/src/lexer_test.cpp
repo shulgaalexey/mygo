@@ -1,9 +1,9 @@
-#include <limits.h>
+#include <limits.h> // DEL
 #include "gtest/gtest.h"
 #include "lexer.h"
 #include "assert_range.h"
-#include <string>
-#include <vector>
+#include <string> // DEL
+#include <vector> // DEL
 
 using namespace Interpreter;
 
@@ -16,7 +16,7 @@ class LexerTest : public ::testing::Test {
 		}
 };
 
-/*TEST_F(LexerTest, should_return_empty_token_list_when_put_empty_expression) {
+TEST_F(LexerTest, should_return_empty_token_list_when_put_empty_expression) {
 	Tokens tokens = Lexer::Tokenize(L"");
 	EXPECT_EQ(tokens.size(), 0);
 }
@@ -29,4 +29,9 @@ TEST_F(LexerTest, should_tokenize_single_plus_operator) {
 TEST_F(LexerTest, shoud_tokenize_single_digit) {
 	Tokens tokens = Lexer::Tokenize(L"1");
 	AssertRange::AreEqual({ 1.0 }, tokens);
-}*/
+}
+
+TEST_F(LexerTest, should_tokenize_floating_point_number) {
+	Tokens tokens = Lexer::Tokenize(L"12.34");
+	AssertRange::AreEqual({ 12.34 }, tokens);
+}
