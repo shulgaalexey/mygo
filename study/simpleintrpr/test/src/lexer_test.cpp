@@ -1,9 +1,6 @@
-#include <limits.h> // DEL
 #include "gtest/gtest.h"
 #include "lexer.h"
 #include "assert_range.h"
-#include <string> // DEL
-#include <vector> // DEL
 
 using namespace Interpreter;
 

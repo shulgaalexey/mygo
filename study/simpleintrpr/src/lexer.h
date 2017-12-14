@@ -98,6 +98,57 @@ inline std::wstring ToString(const TokenType &tokenType) {
 
 typedef std::vector<Token> Tokens;
 
+
+namespace Detail {
+
+class Tokenizer {
+	public:
+		Tokenizer(const std::wstring &expr) : m_current(expr.c_str()) {}
+
+		void Tokenize() {
+			while (!EndOfExpression()) {
+				if (IsNumber()) {
+					ScanNumber();
+				} else if (IsOperator()) {
+					ScanOperator();
+				} else {
+					MoveNext();
+				}
+			}
+		}
+
+		const Tokens &Result() const { return m_result; }
+
+	private:
+		bool EndOfExpression() const { return *m_current == L'\0'; }
+
+		bool IsNumber() const {return iswdigit(*m_current) != 0; }
+
+		void ScanNumber() {
+			wchar_t *end = nullptr;
+			m_result.push_back(wcstod(m_current, &end));
+			m_current = end;
+		}
+
+		bool IsOperator() const {
+			return *m_current == static_cast<wchar_t>(Operator::Plus);
+		}
+
+		void ScanOperator() {
+			m_result.push_back(static_cast<Operator>(*m_current));
+			MoveNext();
+		}
+
+		void MoveNext() { ++m_current; }
+
+	private:
+		const wchar_t *m_current;
+		Tokens m_result;
+};
+
+} // namespace Detail
+
+
 namespace Lexer {
 
 /**
@@ -121,24 +172,9 @@ namespace Lexer {
  * @see other methods of the interpreter
  */
 inline Tokens Tokenize(std::wstring expr) {
-	Tokens result;
-	const wchar_t *current = expr.c_str();
-
-	while (*current) {
-
-		if (std::iswdigit(*current)) {
-			wchar_t* end;
-			result.push_back(std::wcstod(current, &end));
-			current = end;
-		} else if (*current == static_cast<wchar_t>(Operator::Plus)) {
-			result.push_back(static_cast<Operator>(*current));
-			++current;
-		} else {
-			++current;
-		}
-	}
-
-	return result;
+	Detail::Tokenizer tokenizer(expr);
+	tokenizer.Tokenize();
+	return tokenizer.Result();
 }
 
 }; // namespace Lexer
