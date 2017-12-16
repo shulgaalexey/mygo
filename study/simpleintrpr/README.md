@@ -16,13 +16,14 @@ Features expected:
 # Build & Test
 
 ```
-./make.sh
+make
 ```
+
 
 
 # Roadmap
 
- - [ ] Lexical analyzer
+ - [x] Lexical analyzer
  - [ ] Syntax analyzer
  - [ ] Calculator (stack machine)
  - [ ] Interpreter (facade for all above components)
