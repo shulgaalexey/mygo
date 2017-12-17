@@ -155,3 +155,16 @@ TEST_F(ParserTest, should_throw_when_closing_paren_not_found) {
 		std::cerr << "EXCEPTION" << std::endl;
 	}
 }
+
+// Pass (1 + 2) * (3 / (4 - 5)), return 1 2 + 3 4 5 - / *
+TEST_F(ParserTest, should_parse_complex_expression_with_parens) {
+	Tokens tokens = Parser::Parse({
+			pLeft, _1, plus, _2, pRight,
+			mul,
+			pLeft, _3,
+			Interpreter::div, pLeft, _4, minus, _5, pRight, pRight });
+
+	AssertRange::AreEqual({ _1, _2, plus, _3, _4, _5, minus,
+		       Interpreter::div, mul },
+			tokens);
+}
