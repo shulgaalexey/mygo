@@ -20,7 +20,6 @@ enum class Operator : wchar_t {
 	RParen = L')'
 };
 
-
 enum class TokenType {
 	Operator,
 	Number
@@ -75,6 +74,19 @@ class Token {
 			double m_number;
 		};
 };
+
+static const Token plus(Operator::Plus);
+static const Token minus(Operator::Minus);
+static const Token mul(Operator::Mul);
+static const Token div(Operator::Div);
+static const Token pLeft(Operator::LParen);
+static const Token pRight(Operator::RParen);
+static const Token _1(1);
+static const Token _2(2);
+static const Token _3(3);
+static const Token _4(4);
+static const Token _5(5);
+
 
 inline std::wstring ToString(const Operator &op) {
 	return{ static_cast<wchar_t>(op) };

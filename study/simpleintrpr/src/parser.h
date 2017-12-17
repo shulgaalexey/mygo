@@ -24,60 +24,87 @@ inline int PrecedenceOf(Operator op) {
 namespace Detail {
 
 class ShuntingYardParser {
-	public:
-		ShuntingYardParser(const Tokens &tokens)
-			: m_current(tokens.cbegin())
-			, m_end(tokens.cend()) {}
+public:
+	ShuntingYardParser(const Tokens &tokens)
+		: m_current(tokens.cbegin())
+		, m_end(tokens.cend()) {}
 
-		void Parse() {
-			for (; m_current != m_end; ++m_current) {
-				ParseCurrentToken();
-			}
-			PopToOutputUntil(StackIsEmpty);
+	void Parse() {
+		for (; m_current != m_end; ++m_current) {
+			ParseCurrentToken();
 		}
-
-		const Tokens &Result() const { return m_output; }
-
-	private:
-		static bool StackIsEmpty() { return false; }
-
-		void ParseCurrentToken() {
-			switch (m_current->Type()) {
-			case TokenType::Operator:
-				ParseOperator();
-				break;
-			case TokenType::Number:
-				ParseNumber();
-				break;
-			default:
-				throw std::out_of_range("TokenType");
+		PopToOutputUntil([this]() {
+			if (m_stack.back() == Token(Operator::LParen)) {
+				throw std::logic_error("Closing paren not found");
 			}
-		}
+			return false;
+		});
+	}
 
-		void ParseOperator() {
-			PopToOutputUntil([this] () {
-				return PrecedenceOf(m_stack.back())
-					< PrecedenceOf(*m_current); });
+	const Tokens &Result() const { return m_output; }
+
+private:
+	static bool StackIsEmpty() { return false; }
+
+	void ParseCurrentToken() {
+		switch (m_current->Type()) {
+		case TokenType::Operator:
+			ParseOperator();
+			break;
+		case TokenType::Number:
+			ParseNumber();
+			break;
+		default:
+			throw std::out_of_range("TokenType");
+		}
+	}
+
+	void ParseOperator() {
+		switch (*m_current) {
+		case Operator::LParen:
 			m_stack.push_back(*m_current);
-		}
-
-		void ParseNumber() {
-			m_output.push_back(*m_current);
-		}
-
-		template<class T>
-		void PopToOutputUntil(T whenToEnd) {
-			while (!m_stack.empty() && !whenToEnd()) {
-				m_output.push_back(m_stack.back());
-				m_stack.pop_back();
+			break;
+		case Operator::RParen:
+			PopToOutputUntil([this] () {return LeftParenOnTop(); });
+			if (m_stack.empty()
+					|| static_cast<Operator>(m_stack.back()) != Operator::LParen) {
+				throw std::logic_error("Opening paren not found");
 			}
+			m_stack.pop_back();
+			break;
+		default:
+			PopToOutputUntil([this] () { return LeftParenOnTop()
+				|| OperatorWithLessPrecedenceOnTop(); });
+			m_stack.push_back(*m_current);
+			break;
 		}
+	}
 
-	private:
-		Tokens::const_iterator m_current;
-		Tokens::const_iterator m_end;
-		Tokens m_output;
-		Tokens m_stack;
+	bool OperatorWithLessPrecedenceOnTop() const {
+		return PrecedenceOf(m_stack.back()) < PrecedenceOf(*m_current);
+	}
+
+	bool LeftParenOnTop() const {
+		return static_cast<Operator>(m_stack.back()) == Operator::LParen;
+	}
+
+	void ParseNumber() {
+		m_output.push_back(*m_current);
+	}
+
+	template<class T>
+	void PopToOutputUntil(T whenToEnd) {
+		while (!m_stack.empty() && !whenToEnd()) {
+			m_output.push_back(m_stack.back());
+			m_stack.pop_back();
+		}
+	}
+
+private:
+	Tokens::const_iterator m_current;
+	Tokens::const_iterator m_end;
+	Tokens m_output;
+	Tokens m_stack;
 };
 
 } // namespace Detail

@@ -114,3 +114,44 @@ TEST_F(ParserTest, should_parse_add_and_mul) {
  			Token(Operator::Mul),
 			Token(Operator::Plus) }, tokens);
 }
+
+// Pass [(1)], return [1]
+TEST_F(ParserTest, should_skip_paren_around_number) {
+	Tokens tokens = Parser::Parse({
+			Token(Operator::LParen),
+			Token(1),
+			Token(Operator::RParen) });
+
+	AssertRange::AreEqual({ Token(1) }, tokens);
+}
+
+// Pass [(1 + 2) * 3)], return [1 2 + 3 *]
+TEST_F(ParserTest, should_parse_expression_with_parens_in_beginning) {
+	Tokens tokens = Parser::Parse( {
+		pLeft, _1, plus, _2, pRight, mul, _3 });
+	AssertRange::AreEqual({ _1, _2, plus, _3, mul }, tokens);
+}
+
+// Pass [1)], throw exception
+TEST_F(ParserTest, should_throw_when_opening_paren_not_found) {
+	try {
+		Tokens tokens = Parser::Parse( { _1, pRight });
+	} catch (std::logic_error err) {
+		// Nothing to do here
+		std::cout << "             Expected exception +++++" << std::endl;
+	} catch (std::exception exc) {
+		std::cerr << "EXCEPTION" << std::endl;
+	}
+}
+
+// Pass [(1], throw exception
+TEST_F(ParserTest, should_throw_when_closing_paren_not_found) {
+	try {
+		Tokens tokens = Parser::Parse( { pLeft, _1 });
+	} catch (std::logic_error err) {
+		// Nothing to do here
+		std::cout << "             Expected exception +++++" << std::endl;
+	} catch (std::exception exc) {
+		std::cerr << "EXCEPTION" << std::endl;
+	}
+}
