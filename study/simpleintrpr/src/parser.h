@@ -33,12 +33,7 @@ public:
 		for (; m_current != m_end; ++m_current) {
 			ParseCurrentToken();
 		}
-		PopToOutputUntil([this]() {
-			if (m_stack.back() == Token(Operator::LParen)) {
-				throw std::logic_error("Closing paren not found");
-			}
-			return false;
-		});
+		PopToOutputUntil([this]() { return StackHasNoOperators(); });
 	}
 
 	const Tokens &Result() const { return m_output; }
@@ -59,18 +54,21 @@ private:
 		}
 	}
 
+	bool StackHasNoOperators() const {
+		if (m_stack.back() == Token(Operator::LParen)) {
+			throw std::logic_error("Closing paren not found");
+		}
+		return false;
+	}
+
 	void ParseOperator() {
 		switch (*m_current) {
 		case Operator::LParen:
-			m_stack.push_back(*m_current);
+			PushCurrentToStack();
 			break;
 		case Operator::RParen:
 			PopToOutputUntil([this] () {return LeftParenOnTop(); });
-			if (m_stack.empty()
-					|| static_cast<Operator>(m_stack.back()) != Operator::LParen) {
-				throw std::logic_error("Opening paren not found");
-			}
-			m_stack.pop_back();
+			PopLeftParen();
 			break;
 		default:
 			PopToOutputUntil([this] () { return LeftParenOnTop()
@@ -78,6 +76,18 @@ private:
 			m_stack.push_back(*m_current);
 			break;
 		}
+	}
+
+	void PushCurrentToStack() {
+		m_stack.push_back(*m_current);
+	}
+
+	void PopLeftParen() {
+		if (m_stack.empty() || static_cast<Operator>(m_stack.back())
+				!= Operator::LParen) {
+			throw std::logic_error("Opening paren not found");
+		}
+		m_stack.pop_back();
 	}
 
 	bool OperatorWithLessPrecedenceOnTop() const {
