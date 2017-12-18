@@ -15,6 +15,11 @@ class EvaluatorTest : public ::testing::Test {
 		}
 };
 
-//
-TEST_F(EvaluatorTest, should_return) {
+// Pass empty list, return 0
+TEST_F(EvaluatorTest, should_return_zero_when_evaluate_empty_list) {
+	double result = Evaluator::Evaluate({});
+	EXPECT_EQ(0., result);
 }
+
+// Pass list with single number, return that number
+// Pass [1 2 +], return 3
