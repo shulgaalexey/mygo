@@ -12,14 +12,16 @@ class TokenTest : public ::testing::Test {
 		}
 };
 
-TEST_F(TokenTest, should_get_type_for_operator_token) {
-	Token opToken(Operator::Plus);
-	EXPECT_EQ(TokenType::Operator, opToken.Type());
+TEST_F(TokenTest, should_check_for_equality_operator_tokens) {
+	EXPECT_EQ(minus, minus);
+	EXPECT_NE(minus, plus);
+	EXPECT_NE(minus, _1);
 }
 
-TEST_F(TokenTest, should_get_type_for_number_token) {
-	Token numToken(1.2);
-	EXPECT_EQ(TokenType::Number, numToken.Type());
+TEST_F(TokenTest, should_check_for_equality_number_tokens) {
+	EXPECT_EQ(_1, _1);
+	EXPECT_NE(_1, _2);
+	EXPECT_NE(_1, minus);
 }
 
 TEST_F(TokenTest, should_get_operator_code_from_operator_token) {
