@@ -89,4 +89,14 @@ inline double Evaluate(const Tokens &tokens) {
 
 } // namespace Evaluator
 
+
+
+namespace Interpreter {
+
+inline double InterpreteExpression(const std::wstring &expression) {
+	return Evaluator::Evaluate(Parser::Parse(Lexer::Tokenize(expression)));
+}
+
+} // namespace Interpreter
+
 #endif/*__EVALUATOR_H_INCLUDED__*/
