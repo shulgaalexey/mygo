@@ -22,4 +22,9 @@ TEST_F(EvaluatorTest, should_return_zero_when_evaluate_empty_list) {
 }
 
 // Pass list with single number, return that number
+TEST_F(EvaluatorTest, shoudl_return_number_when_evaluate_list_with_number) {
+	double result = Evaluator::Evaluate({ _1 });
+	EXPECT_EQ(1., result);
+}
+
 // Pass [1 2 +], return 3

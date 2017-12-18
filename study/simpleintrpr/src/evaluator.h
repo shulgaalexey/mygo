@@ -5,8 +5,12 @@
 
 namespace Evaluator {
 
-inline double Evaluate(Tokens) {
-	return 0.;
+inline double Evaluate(const Tokens &tokens) {
+	double result = 0.;
+	for (const Token &token : tokens) {
+		result = token;
+	}
+	return result;
 }
 
 } // namespace Evaluator
