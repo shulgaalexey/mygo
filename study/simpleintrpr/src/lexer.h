@@ -7,6 +7,7 @@
 #include <cwctype>
 #include <cwchar>
 #include <algorithm>
+#include <memory>
 
 namespace Interpreter {
 
@@ -94,65 +95,44 @@ class Token {
 	};
 
 public:
-	Token(Operator op) : m_type(TokenType::Operator), m_operator(op) {}
-	Token(double num) : m_type(TokenType::Number), m_number(num) {}
-	TokenType Type() const { return m_type; }
+	Token(Operator op) : m_concept(std::make_shared<OperatorToken>(op)) {}
+	Token(double num) : m_concept(std::make_shared<NumberToken>(num)) {}
+	TokenType Type() const { return m_concept->Type(); }
+
+	void Accept(TokenVisitor &visitor) const {
+		m_concept->Accept(visitor);
+	}
 
 	operator Operator() const {
-		if (m_type != TokenType::Operator)
-			throw std::logic_error("Should be operator token!");
-		return m_operator;
+		return m_concept->ToOperator();
 	}
 
 	operator double() const {
-		if (m_type != TokenType::Number)
-			throw std::logic_error("Should be number token!");
-		return m_number;
+		return m_concept->ToNumber();
 	}
 
+	/*friend inline bool operator == (const Token &left, const Token &right) {
+		return left.m_concept->Equals(*right.m_concept);
+	}*/
+
+	/*friend inline bool operator != (const Token &left, const Token &right) {
+		return !(left == right);
+	}*/
+
 	bool operator == (const Token &ref) const {
-		if (m_type != ref.m_type)
-			return false;
-
-		switch (m_type) {
-		case TokenType::Number:
-			if (m_number != ref.m_number)
-				return false;
-			break;
-		case TokenType::Operator:
-			if (m_operator != ref.m_operator)
-				return false;
-			break;
-		default:
-			throw std::logic_error("Not supported token type at operator ==");
-		}
-
-		return true;
+		return m_concept->Equals(*ref.m_concept);
 	}
 
 	bool operator != (const Token &ref) const {
 		return !(*this == ref);
 	}
 
-	void Accept(TokenVisitor &visitor) const {
-		switch (m_type) {
-		case TokenType::Operator:
-			visitor.VisitOperator(m_operator);
-			break;
-		case TokenType::Number:
-			visitor.VisitNumber(m_number);
-			break;
-		default:
-			throw std::out_of_range("TokenType");
-		}
+	friend inline std::wstring ToString(const Token &token) {
+		return token.m_concept->ToString();
 	}
 
 private:
-	TokenType m_type;
-	union {
-		Operator m_operator;
-		double m_number;
-	};
+	std::shared_ptr<const TokenConcept> m_concept;
 };
 
 static const Token plus(Operator::Plus);
@@ -168,7 +148,7 @@ static const Token _4(4);
 static const Token _5(5);
 
 
-inline std::wstring ToString(const Token &token) {
+/*inline std::wstring ToString(const Token &token) {
 	switch(token.Type()) {
 	case TokenType::Number:
 		return std::to_wstring(static_cast<double>(token));
@@ -177,7 +157,7 @@ inline std::wstring ToString(const Token &token) {
 	default:
 		throw std::out_of_range("TokenType");
 	}
-}
+}*/
 
 inline std::wstring ToString(const TokenType &type) {
 	switch(type) {
