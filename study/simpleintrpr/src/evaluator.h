@@ -8,42 +8,26 @@ namespace Evaluator {
 
 namespace Detail {
 
-class StackEvaluator {
+class StackEvaluator : TokenVisitor {
 public:
-	StackEvaluator(const Tokens &tokens)
-		: m_current(tokens.cbegin())
-		, m_end(tokens.cend()) {}
-
-	void Evaluate() {
-		for (; m_current != m_end; ++m_current) {
-			EvaluateCurrentToken();
+	void Evaluate(const Tokens &tokens) {
+		for (const Token &token : tokens) {
+			token.Accept(*this);
 		}
 	}
 
 	double Result() const { return m_stack.empty() ? 0 : m_stack.back(); }
 
 private:
-	void EvaluateCurrentToken() {
-		switch (m_current->Type()) {
-		case TokenType::Operator:
-			EvaluateOperator();
-			break;
-		case TokenType::Number:
-			EvaluateNumber();
-			break;
-		default:
-			throw std::out_of_range("TokenType");
-		}
-	}
 
-	void EvaluateOperator() {
+	void VisitOperator(Operator op) override {
 		double second = PopOperand();
 		double first = PopOperand();
-		m_stack.push_back(BinaryFunctionFor(*m_current)(first, second));
+		m_stack.push_back(BinaryFunctionFor(op)(first, second));
 	}
 
-	void EvaluateNumber() {
-		m_stack.push_back(*m_current);
+	void VisitNumber(double number) override {
+		m_stack.push_back(number);
 	}
 
 	double PopOperand() {
@@ -70,8 +54,6 @@ private:
 	}
 
 private:
-	Tokens::const_iterator m_current;
-	Tokens::const_iterator m_end;
 	std::vector<double> m_stack;
 };
 
@@ -81,8 +63,8 @@ private:
 } // namespace Detail
 
 inline double Evaluate(const Tokens &tokens) {
-	Detail::StackEvaluator evaluator(tokens);
-	evaluator.Evaluate();
+	Detail::StackEvaluator evaluator;
+	evaluator.Evaluate(tokens);
 	return evaluator.Result();
 }
 

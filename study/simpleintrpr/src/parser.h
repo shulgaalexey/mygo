@@ -23,7 +23,7 @@ inline int PrecedenceOf(Operator op) {
 
 namespace Detail {
 
-class ShuntingYardParser {
+class ShuntingYardParser : TokenVisitor {
 public:
 	ShuntingYardParser(const Tokens &tokens)
 		: m_current(tokens.cbegin())
@@ -31,7 +31,7 @@ public:
 
 	void Parse() {
 		for (; m_current != m_end; ++m_current) {
-			ParseCurrentToken();
+			m_current->Accept(*this);
 		}
 		PopToOutputUntil([this]() { return StackHasNoOperators(); });
 	}
@@ -41,19 +41,6 @@ public:
 private:
 	static bool StackIsEmpty() { return false; }
 
-	void ParseCurrentToken() {
-		switch (m_current->Type()) {
-		case TokenType::Operator:
-			ParseOperator();
-			break;
-		case TokenType::Number:
-			ParseNumber();
-			break;
-		default:
-			throw std::out_of_range("TokenType");
-		}
-	}
-
 	bool StackHasNoOperators() const {
 		if (m_stack.back() == Token(Operator::LParen)) {
 			throw std::logic_error("Closing paren not found");
@@ -61,7 +48,7 @@ private:
 		return false;
 	}
 
-	void ParseOperator() {
+	void VisitOperator(Operator) override {
 		switch (*m_current) {
 		case Operator::LParen:
 			PushCurrentToStack();
@@ -98,7 +85,7 @@ private:
 		return static_cast<Operator>(m_stack.back()) == Operator::LParen;
 	}
 
-	void ParseNumber() {
+	void VisitNumber(double) override {
 		m_output.push_back(*m_current);
 	}
 

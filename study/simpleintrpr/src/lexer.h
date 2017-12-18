@@ -25,54 +25,74 @@ enum class TokenType {
 	Number
 };
 
+struct TokenVisitor {
+	virtual void VisitNumber(double) {}
+	virtual void VisitOperator(Operator) {}
+protected:
+	~TokenVisitor() {}
+};
+
 class Token {
-	public:
-		Token(Operator op) : m_type(TokenType::Operator), m_operator(op) {}
-		Token(double num) : m_type(TokenType::Number), m_number(num) {}
-		TokenType Type() const { return m_type; }
+public:
+	Token(Operator op) : m_type(TokenType::Operator), m_operator(op) {}
+	Token(double num) : m_type(TokenType::Number), m_number(num) {}
+	TokenType Type() const { return m_type; }
 
-		operator Operator() const {
-			if (m_type != TokenType::Operator)
-				throw std::logic_error("Should be operator token!");
-			return m_operator;
-		}
+	operator Operator() const {
+		if (m_type != TokenType::Operator)
+			throw std::logic_error("Should be operator token!");
+		return m_operator;
+	}
 
-		operator double() const {
-			if (m_type != TokenType::Number)
-				throw std::logic_error("Should be number token!");
-			return m_number;
-		}
+	operator double() const {
+		if (m_type != TokenType::Number)
+			throw std::logic_error("Should be number token!");
+		return m_number;
+	}
 
-		bool operator == (const Token &ref) const {
-			if (m_type != ref.m_type)
+	bool operator == (const Token &ref) const {
+		if (m_type != ref.m_type)
+			return false;
+
+		switch (m_type) {
+		case TokenType::Number:
+			if (m_number != ref.m_number)
 				return false;
-
-			switch (m_type) {
-			case TokenType::Number:
-				if (m_number != ref.m_number)
-					return false;
-				break;
-			case TokenType::Operator:
-				if (m_operator != ref.m_operator)
-					return false;
-				break;
-			default:
-				throw std::logic_error("Not supported token type at operator ==");
-			}
-
-			return true;
+			break;
+		case TokenType::Operator:
+			if (m_operator != ref.m_operator)
+				return false;
+			break;
+		default:
+			throw std::logic_error("Not supported token type at operator ==");
 		}
 
-		bool operator != (const Token &ref) const {
-			return !(*this == ref);
-		}
+		return true;
+	}
 
-	private:
-		TokenType m_type;
-		union {
-			Operator m_operator;
-			double m_number;
-		};
+	bool operator != (const Token &ref) const {
+		return !(*this == ref);
+	}
+
+	void Accept(TokenVisitor &visitor) const {
+		switch (m_type) {
+		case TokenType::Operator:
+			visitor.VisitOperator(m_operator);
+			break;
+		case TokenType::Number:
+			visitor.VisitNumber(m_number);
+			break;
+		default:
+			throw std::out_of_range("TokenType");
+		}
+	}
+
+private:
+	TokenType m_type;
+	union {
+		Operator m_operator;
+		double m_number;
+	};
 };
 
 static const Token plus(Operator::Plus);
