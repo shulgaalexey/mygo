@@ -20,6 +20,11 @@ enum class Operator : wchar_t {
 	RParen = L')'
 };
 
+inline std::wstring ToString(const Operator &op) {
+	return{ static_cast<wchar_t>(op) };
+}
+
+
 enum class TokenType {
 	Operator,
 	Number
@@ -33,6 +38,61 @@ protected:
 };
 
 class Token {
+
+	struct TokenConcept {
+		virtual ~TokenConcept() {}
+		virtual void Accept(TokenVisitor &) const = 0;
+		virtual std::wstring ToString() const = 0;
+		virtual bool Equals(const TokenConcept &) const = 0;
+		virtual TokenType Type() const = 0;
+		virtual double ToNumber() const {
+			throw std::logic_error("Invalid token type");
+		}
+		virtual Operator ToOperator() const {
+			throw std::logic_error("Invalid token type");
+		}
+	};
+
+	struct NumberToken : TokenConcept {
+		NumberToken(double val) : m_number(val) {}
+		void Accept(TokenVisitor &visitor) const override {
+			visitor.VisitNumber(m_number);
+		}
+		std::wstring ToString() const override {
+			return std::to_wstring(m_number);
+		}
+		bool Equals(const TokenConcept &other) const override {
+			return other.Type() == Type()
+				&& other.ToNumber() == m_number;
+		}
+		TokenType Type() const override {
+			return TokenType::Number;
+		}
+		double ToNumber() const override { return m_number; }
+	private:
+		double m_number;
+	};
+
+	struct OperatorToken : TokenConcept {
+		OperatorToken(Operator val) : m_operator(val) {}
+		void Accept(TokenVisitor &visitor) const override {
+			visitor.VisitOperator(m_operator);
+		}
+		std::wstring ToString() const override {
+			return Interpreter::ToString(m_operator);
+		}
+		bool Equals(const TokenConcept &other) const override {
+			return other.Type() == Type()
+				&& other.ToOperator() == m_operator;
+		}
+		TokenType Type() const override {
+			return TokenType::Operator;
+		}
+		Operator ToOperator() const override { return m_operator; }
+	private:
+		Operator m_operator;
+	};
+
 public:
 	Token(Operator op) : m_type(TokenType::Operator), m_operator(op) {}
 	Token(double num) : m_type(TokenType::Number), m_number(num) {}
@@ -107,10 +167,6 @@ static const Token _3(3);
 static const Token _4(4);
 static const Token _5(5);
 
-
-inline std::wstring ToString(const Operator &op) {
-	return{ static_cast<wchar_t>(op) };
-}
 
 inline std::wstring ToString(const Token &token) {
 	switch(token.Type()) {
