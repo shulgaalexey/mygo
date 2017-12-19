@@ -6,22 +6,12 @@ My Go interpreter
 # Interpretator theory and guidance
 
 
-# How to build and run
+# How to build and test
 
 ```
-$ cd ./src
 $ make
-$ ??? TODO
 ```
 
-
-# How to test
-
-```
-$ cd ./test/src
-$ make
-$ ./testAll
-```
 
 Google Test Intro: https://github.com/google/googletest/blob/master/googletest/docs/Primer.md
 
