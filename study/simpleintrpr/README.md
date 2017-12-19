@@ -2,15 +2,15 @@
 
 Features expected:
 
- - calculates equations with  - + / *
- - operator priority aware
- - parenthes aware
- - unar + and -
- - multiple equations separated by (;)
- - built-in consts (pi, e)
- - new const declaration
- - built-in functions with variable arg number
- - new function declaration
+ - [x] calculates equations with  - + / *
+ - [x] operator priority aware
+ - [x] parenthes aware
+ - [ ] unar + and -
+ - [ ] multiple equations separated by (;)
+ - [ ] built-in consts (pi, e)
+ - [ ] new const declaration
+ - [ ] built-in functions with variable arg number
+ - [ ] new function declaration
 
 
 # Build & Test
@@ -24,9 +24,9 @@ make
 # Roadmap
 
  - [x] Lexical analyzer
- - [ ] Syntax analyzer
- - [ ] Calculator (stack machine)
- - [ ] Interpreter (facade for all above components)
+ - [x] Syntax analyzer
+ - [x] Calculator (stack machine)
+ - [x] Interpreter (facade for all above components)
 
 
 # Constraints
